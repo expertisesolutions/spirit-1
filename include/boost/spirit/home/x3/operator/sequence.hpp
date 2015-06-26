@@ -9,7 +9,7 @@
 #define SPIRIT_SEQUENCE_JAN_06_2013_1015AM
 
 #include <boost/spirit/home/x3/support/traits/attribute_of.hpp>
-#include <boost/spirit/home/x3/core/parser.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 #include <boost/spirit/home/x3/operator/detail/sequence.hpp>
 #include <boost/spirit/home/x3/directive/expect.hpp>
 

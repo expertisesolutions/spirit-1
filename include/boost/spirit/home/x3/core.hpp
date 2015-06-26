@@ -9,6 +9,7 @@
 #define BOOST_SPIRIT_X3_CORE_APRIL_04_2012_0318PM
 
 #include <boost/spirit/home/x3/core/parse.hpp>
+#include <boost/spirit/home/x3/core/generate.hpp>
 #include <boost/spirit/home/x3/core/generator.hpp>
 #include <boost/spirit/home/x3/core/both.hpp>
 //~ #include <boost/spirit/home/x3/core/parse_attr.hpp>

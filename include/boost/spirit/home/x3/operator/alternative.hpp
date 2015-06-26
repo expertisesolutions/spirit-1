@@ -15,6 +15,7 @@ namespace boost { namespace spirit { namespace x3
 {
     template <typename Left, typename Right>
     struct alternative : binary_parser<Left, Right, alternative<Left, Right>>
+      , generator_base
     {
         typedef binary_parser<Left, Right, alternative<Left, Right>> base_type;
 
@@ -38,6 +39,16 @@ namespace boost { namespace spirit { namespace x3
         {
             return detail::parse_alternative(this->left, first, last, context, rcontext, attr)
                || detail::parse_alternative(this->right, first, last, context, rcontext, attr);
+        }
+
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate(
+            OutputIterator& sink
+          , Context const& context, RContext& rcontext, Attribute& attr) const
+        {
+            return detail::generate_alternative(this->left, sink, context, rcontext, attr)
+              || detail::generate_alternative(this->right, sink, context, rcontext, attr);
         }
     };
 

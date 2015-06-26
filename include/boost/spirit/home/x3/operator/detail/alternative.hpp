@@ -255,6 +255,18 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         return false;
     }
 
+    template <typename Generator, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_alternative(Generator const& p, OutputIterator& sink
+      , Context const& context, RContext& rcontext, Attribute& attr)
+    {
+        // typedef detail::pass_variant_attribute<Parser, Attribute, Context> pass;
+
+        // typename pass::type attr_ = pass::call(attr);
+        if (p.generate(sink, context, rcontext, attr))
+            return true;
+        return false;
+    }
 
     template <typename Left, typename Right, typename Context, typename RContext>
     struct parse_into_container_impl<alternative<Left, Right>, Context, RContext>

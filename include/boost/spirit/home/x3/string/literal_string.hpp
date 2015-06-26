@@ -10,6 +10,7 @@
 #include <boost/spirit/home/x3/core/parser.hpp>
 #include <boost/spirit/home/x3/core/skip_over.hpp>
 #include <boost/spirit/home/x3/string/detail/string_parse.hpp>
+#include <boost/spirit/home/x3/string/detail/string_generate.hpp>
 #include <boost/spirit/home/x3/support/no_case.hpp>
 #include <boost/spirit/home/x3/string/detail/no_case_string_parse.hpp>
 #include <boost/spirit/home/x3/support/utility/utf8.hpp>
@@ -26,6 +27,7 @@ namespace boost { namespace spirit { namespace x3
     template <typename String, typename Encoding,
         typename Attribute = std::basic_string<typename Encoding::char_type>>
     struct literal_string : parser<literal_string<String, Encoding, Attribute>>
+      , generator_base
     {
         typedef typename Encoding::char_type char_type;
         typedef Encoding encoding;
@@ -46,6 +48,14 @@ namespace boost { namespace spirit { namespace x3
             return detail::string_parse(str, first, last, attr, get_case_compare<encoding>(context));
         }
 
+        template <typename OutputIterator, typename Context, typename Attribute_>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, unused_type, Attribute_ const& attr) const
+        {
+            return detail::string_generate(str, sink, attr, get_case_compare<encoding>(context));
+        }
+        
         String str;
     };
 
