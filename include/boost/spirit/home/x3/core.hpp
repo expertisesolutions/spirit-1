@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2001-2014 Joel de Guzman
+    Copyright (c) 2015      Felipe Magno de Almeida
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +9,8 @@
 #define BOOST_SPIRIT_X3_CORE_APRIL_04_2012_0318PM
 
 #include <boost/spirit/home/x3/core/parse.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
+#include <boost/spirit/home/x3/core/both.hpp>
 //~ #include <boost/spirit/home/x3/core/parse_attr.hpp>
 #include <boost/spirit/home/x3/core/parser.hpp>
 #include <boost/spirit/home/x3/core/skip_over.hpp>

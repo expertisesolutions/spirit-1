@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2001-2014 Joel de Guzman
+    Copyright (c) 2015      Felipe Magno de Almeida
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +17,7 @@ namespace boost { namespace spirit { namespace x3
 {
     template <typename Left, typename Right>
     struct sequence : binary_parser<Left, Right, sequence<Left, Right>>
+      , generator_base
     {
         typedef binary_parser<Left, Right, sequence<Left, Right>> base_type;
 
@@ -42,6 +44,25 @@ namespace boost { namespace spirit { namespace x3
           , Context const& context, RContext& rcontext, Attribute& attr) const
         {
             return detail::parse_sequence(*this, first, last, context, rcontext, attr
+              , typename traits::attribute_category<Attribute>::type());
+        }
+
+        template <typename OutputIterator, typename Context, typename RContext>
+        bool generate(
+            OutputIterator& first
+          , Context const& context, RContext& rcontext, unused_type) const
+        {
+          static_assert(!std::is_void<OutputIterator>::value, "");
+            return false;
+        }
+
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate(
+            OutputIterator& first
+          , Context const& context, RContext& rcontext, Attribute& attr) const
+        {
+            return detail::generate_sequence(*this, first, context, rcontext, attr
               , typename traits::attribute_category<Attribute>::type());
         }
     };

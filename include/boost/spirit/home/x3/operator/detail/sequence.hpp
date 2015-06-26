@@ -1,5 +1,6 @@
 /*=============================================================================
     Copyright (c) 2001-2014 Joel de Guzman
+    Copyright (c) 2015      Felipe Magno de Almeida
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -498,6 +499,32 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         }
     };
 
+    template <typename Generator, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_sequence(
+        Generator const& generator, OutputIterator& first
+      , Context const& context, RContext& rcontext, Attribute& attr
+      , traits::tuple_attribute)
+    {
+        typedef typename Generator::left_type Left;
+        typedef typename Generator::right_type Right;
+        typedef partition_attribute<Left, Right, Attribute, Context> partition;
+        typedef typename partition::l_pass l_pass;
+        typedef typename partition::r_pass r_pass;
+
+        typename partition::l_part l_part = partition::left(attr);
+        typename partition::r_part r_part = partition::right(attr);
+        typename l_pass::type l_attr = l_pass::call(l_part);
+        typename r_pass::type r_attr = r_pass::call(r_part);
+
+        OutputIterator save = first;
+        if (generator.left.generate(first, context, rcontext, l_attr)
+            && generator.right.generate(first, context, rcontext, r_attr))
+            return true;
+        first = save;
+        return false;
+    }
+  
 }}}}
 
 #endif
