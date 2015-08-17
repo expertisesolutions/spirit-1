@@ -9,12 +9,14 @@
 
 #include <boost/spirit/home/x3/char/char_parser.hpp>
 #include <boost/spirit/home/x3/support/utility/utf8.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
     template <typename Encoding, typename Attribute = typename Encoding::char_type>
     struct literal_char : char_parser<literal_char<Encoding, Attribute>>
+      , generator_base
     {
         typedef typename Encoding::char_type char_type;
         typedef Encoding encoding;
@@ -32,6 +34,16 @@ namespace boost { namespace spirit { namespace x3
             return ((sizeof(Char) <= sizeof(char_type)) || encoding::ischar(ch_))
                 && (get_case_compare<encoding>(context)(ch, char_type(ch_)) == 0);
         }
+
+        using char_parser<literal_char<Encoding, Attribute>>::generate;
+        template <typename OutputIterator, typename Context>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, unused_type, unused_type) const
+        {
+            *sink++ = ch;
+            return true;
+        }      
         
         char_type ch;
     };

@@ -40,12 +40,24 @@ namespace boost { namespace spirit { namespace x3
           : str(str)
         {}
 
-        template <typename Iterator, typename Context, typename Attribute_>
+        template <typename Iterator, typename Context>
         bool parse(Iterator& first, Iterator const& last
-          , Context const& context, unused_type, Attribute_& attr) const
+          , Context const& context, unused_type, Attribute& attr) const
         {
             x3::skip_over(first, last, context);
             return detail::string_parse(str, first, last, attr, get_case_compare<encoding>(context));
+        }
+
+        template <typename Iterator, typename Context, typename Attribute_>
+        bool parse(Iterator& first, Iterator const& last
+          , Context const& context, unused_type, Attribute_& attr_) const
+        {
+            x3::skip_over(first, last, context);
+            Attribute attr;
+            bool b = detail::string_parse(str, first, last, attr, get_case_compare<encoding>(context));
+            if(b)
+              x3::traits::move_to(attr, attr_);
+            return b;
         }
 
         template <typename OutputIterator, typename Context, typename Attribute_>

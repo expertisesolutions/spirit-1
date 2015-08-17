@@ -157,12 +157,14 @@ main()
         std::string s;
         BOOST_TEST( (test_attr("abc,a,b,c",
             char_ >> char_ >> (char_ % ','), s )) );
+        std::cout << "s: " << s << std::endl;
         BOOST_TEST(s == "abcabc");
 
         // test having an optional<container> inside a sequence
         s.erase();
         BOOST_TEST( (test_attr("ab",
             char_ >> char_ >> -(char_ % ','), s )) );
+        std::cout << "s: " << s << std::endl;
         BOOST_TEST(s == "ab");
 
         // test having a variant<container, ...> inside a sequence

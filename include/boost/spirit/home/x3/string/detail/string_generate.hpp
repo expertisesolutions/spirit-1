@@ -17,8 +17,17 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         Char const* str
       , OutputIterator sink, Attribute const& attr, CaseCompareFunc const& compare) 
     {
-        Char ch = *str;
+        Char const* str_compare = str;
+        Char ch = *str_compare;
 
+        auto first = std::begin(attr), last = std::end(attr);
+        for(;first != last && !!ch && *first == ch
+              ;++first, ch = *++str_compare);
+        if(first != last || !!ch)
+          return false;
+        
+        ch = *str;
+        
         while (!!ch)
         {
             // if (i == last || (compare(ch, *i) != 0))
@@ -30,6 +39,22 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         return true;
     }
 
+    template <typename Char, typename OutputIterator, typename CaseCompareFunc>
+    inline bool string_generate(
+        Char const* str
+      , OutputIterator sink, unused_type const, CaseCompareFunc const& compare) 
+    {
+        Char ch = *str;
+        
+        while (!!ch)
+        {
+            *sink++ = ch;
+            ch = *++str;
+        }
+
+        return true;
+    }
+  
     template <typename String, typename OutputIterator, typename Attribute, typename CaseCompareFunc>
     inline bool string_generate(
         String const& str
@@ -39,7 +64,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         typename String::const_iterator str_last = str.end();
 
         for (; stri != str_last; ++stri)
-          *sink++ = stri;
+          *sink++ = *stri;
             // if (i == last || (compare(*stri, *i) != 0))
             //     return false;
         return true;

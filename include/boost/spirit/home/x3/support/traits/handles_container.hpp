@@ -22,6 +22,9 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     template <typename Component, typename Context, typename Enable = void>
     struct handles_container : mpl::bool_<Component::handles_container> {};
 
+    template <typename Component, typename Context, typename Enable = void>
+    struct handles_range : handles_container<Component, Context, Enable> {};
+  
 }}}}
 
 #endif

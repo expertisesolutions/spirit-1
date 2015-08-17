@@ -82,7 +82,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
     template <typename Parser>
     struct parse_into_container_base_impl
     {
-    private:
+
 
         // Parser has attribute (synthesize; Attribute is a container)
         template <typename Iterator, typename Context

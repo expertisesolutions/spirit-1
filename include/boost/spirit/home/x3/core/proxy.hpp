@@ -41,6 +41,17 @@ namespace boost { namespace spirit { namespace x3
             return this->derived().parse_subject(first, last, context, rcontext, attr
                 , typename traits::attribute_category<Attribute>::type());
         }
+
+        // Main entry point.
+        template <typename OutputIterator, typename Context
+          , typename RuleContext, typename Attribute>
+        bool generate(OutputIterator sink
+          , Context const& context, RuleContext& rcontext, Attribute& attr) const
+        {
+            return true;
+            // return this->derived().generate_subject(sink, context, rcontext, attr
+            //     , typename traits::attribute_category<Attribute>::type());
+        }
     };
 
 }}}

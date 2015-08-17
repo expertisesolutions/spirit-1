@@ -9,6 +9,7 @@
 
 #include <boost/spirit/home/x3/support/unused.hpp>
 #include <boost/spirit/home/x3/core/parser.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
@@ -18,6 +19,7 @@ namespace boost { namespace spirit { namespace x3
     ///////////////////////////////////////////////////////////////////////////
     template <typename Subject>
     struct omit_directive : unary_parser<Subject, omit_directive<Subject>>
+      , generator_base
     {
         typedef unary_parser<Subject, omit_directive<Subject> > base_type;
         typedef unused_type attribute_type;
@@ -32,6 +34,13 @@ namespace boost { namespace spirit { namespace x3
           , Context const& context, RContext& rcontext, unused_type) const
         {
             return this->subject.parse(first, last, context, rcontext, unused);
+        }
+
+        template <typename OutputIterator, typename Context, typename RContext>
+        bool generate(OutputIterator sink
+          , Context const& context, RContext& rcontext, unused_type) const
+        {
+            return this->subject.generate(sink, context, rcontext, unused);
         }
     };
 

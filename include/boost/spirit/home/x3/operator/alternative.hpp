@@ -44,11 +44,11 @@ namespace boost { namespace spirit { namespace x3
         template <typename OutputIterator, typename Context
           , typename RContext, typename Attribute>
         bool generate(
-            OutputIterator& sink
+            OutputIterator sink
           , Context const& context, RContext& rcontext, Attribute& attr) const
         {
             return detail::generate_alternative(this->left, sink, context, rcontext, attr)
-              || detail::generate_alternative(this->right, sink, context, rcontext, attr);
+            || detail::generate_alternative(this->right, sink, context, rcontext, attr);
         }
     };
 

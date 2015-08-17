@@ -74,12 +74,40 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
         }
 
         template <typename Source, typename Dest>
-        inline typename enable_if<is_container<Source>>::type
-        move_to(Source&& src, Dest& dest, container_attribute)
+        inline typename enable_if_c
+          <is_container<typename container_value<typename std::remove_reference<Source>::type>::type>::value
+           && is_container<typename container_value<Dest>::type>::value
+          >::type
+        move_from_container_to(Source&& src, Dest& dest)
         {
             traits::move_to(src.begin(), src.end(), dest);
         }
+      
+        template <typename Source, typename Dest>
+        inline typename enable_if_c
+          <is_container<typename container_value<typename std::remove_reference<Source>::type>::type>::value
+           != is_container<typename container_value<Dest>::type>::value
+           || !is_container<typename container_value<Dest>::type>::value
+          >::type
+        move_from_container_to(Source&& src, Dest& dest)
+        {
+            traits::push_back(dest, src);
+        }
+      
+        template <typename Source, typename Dest>
+        inline typename enable_if<is_container<Source>>::type
+        move_to(Source&& src, Dest& dest, container_attribute)
+        {
+            traits::detail::move_from_container_to(std::forward<Source>(src), dest);
+        }
 
+        template <typename Source, typename Dest>
+        inline typename enable_if_c<!is_container<Source>::value>::type
+        move_to(Source&& src, Dest& dest, container_attribute)
+        {
+            traits::push_back(dest, std::forward<Source>(src));
+        }
+      
         template <typename Source, typename Dest>
         inline typename enable_if<
             mpl::and_<

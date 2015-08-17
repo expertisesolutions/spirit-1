@@ -61,6 +61,17 @@ namespace boost { namespace spirit { namespace x3
             }
             return true;
         }
+
+        // Attribute is a container
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate_subject(OutputIterator sink
+          , Context const& context, RContext& rcontext, Attribute& attr
+          , traits::container_attribute) const
+        {
+            return true;
+        }
+
     };
 
     template <typename Subject>

@@ -14,6 +14,7 @@
 #include <boost/spirit/home/x3/support/traits/has_attribute.hpp>
 #include <boost/spirit/home/x3/support/traits/is_substitute.hpp>
 #include <boost/spirit/home/x3/support/traits/container_traits.hpp>
+#include <boost/spirit/home/x3/support/traits/range_traits.hpp>
 #include <boost/spirit/home/x3/core/detail/parse_into_container.hpp>
 
 #include <boost/fusion/include/begin.hpp>
@@ -40,6 +41,8 @@ namespace boost { namespace spirit { namespace x3
 {
     template <typename Left, typename Right>
     struct sequence;
+
+    template <typename A, typename B> struct char_class;
 }}}
 
 namespace boost { namespace spirit { namespace x3 { namespace detail
@@ -133,7 +136,16 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 
     template <typename L, typename R, typename Attribute, typename Context
       , typename Enable = void>
-    struct partition_attribute
+    struct partition_attribute;
+
+    template <typename L, typename R, typename Attribute, typename Context>
+    struct partition_attribute<L, R, Attribute, Context
+       , typename std::enable_if
+         <(fusion::result_of::size<Attribute>::value
+           == (sequence_size<L, Context>::value + sequence_size<R, Context>::value))
+         && (traits::has_attribute<L, Context>::value &&
+             traits::has_attribute<R, Context>::value)
+         >::type>
     {
         static int const l_size = sequence_size<L, Context>::value;
         static int const r_size = sequence_size<R, Context>::value;
@@ -142,12 +154,12 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         // a fusion sequence with the wrong number of elements
         // as that expected by the (sequence) parser.
         static_assert(
-            fusion::result_of::size<Attribute>::value == (l_size + r_size)
+          fusion::result_of::size<Attribute>::value >= (l_size + r_size)
           , "Attribute does not have the expected size."
         );
-
+      
         typedef typename fusion::result_of::begin<Attribute>::type l_begin;
-        typedef typename fusion::result_of::advance_c<l_begin, l_size>::type l_end;
+        typedef typename fusion::result_of::advance_c<l_begin, fusion::result_of::size<Attribute>::value - r_size>::type l_end;
         typedef typename fusion::result_of::end<Attribute>::type r_end;
         typedef fusion::iterator_range<l_begin, l_end> l_part;
         typedef fusion::iterator_range<l_end, r_end> r_part;
@@ -168,6 +180,44 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         }
     };
 
+    // template <typename L, typename R, typename Attribute, typename Context>
+    // struct partition_attribute<L, R, Attribute, Context
+    //   , typename std::enable_if
+    //     <!(fusion::result_of::size<Attribute>::value
+    //      == (sequence_size<L, Context>::value + sequence_size<R, Context>::value))
+    //      && (traits::has_attribute<L, Context>::value &&
+    //          traits::has_attribute<R, Context>::value)
+    //     >::type>
+    // {
+    //     // If you got an error here, then you are trying to pass
+    //     // a fusion sequence with the wrong number of elements
+    //     // as that expected by the (sequence) parser.
+    //     static_assert(
+    //         fusion::result_of::size<Attribute>::value >= 2u
+    //       , "Attribute does not have the expected size."
+    //     );
+
+    //     typedef typename std::remove_reference
+    //       <typename fusion::result_of::at_c
+    //        <Attribute, fusion::result_of::size<Attribute>::value - 1>
+    //        ::type>::type container_type;
+
+    //     typedef Attribute& l_part;
+    //     typedef container_type& r_part;
+    //     typedef pass_through_sequence_attribute<l_part> l_pass;
+    //     typedef pass_through_sequence_attribute<r_part> r_pass;
+
+    //     static l_part left(Attribute& s)
+    //     {
+    //         return l_part(s);
+    //     }
+
+    //     static r_part right(Attribute& s)
+    //     {
+    //         return r_part(fusion::at_c<fusion::result_of::size<Attribute>::value - 1>(s));
+    //     }
+    // };
+  
     template <typename L, typename R, typename Attribute, typename Context>
     struct partition_attribute<L, R, Attribute, Context,
         typename enable_if_c<(!traits::has_attribute<L, Context>::value &&
@@ -292,10 +342,10 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 
     template <typename Parser, typename Iterator, typename Context
       , typename RContext, typename Attribute>
-    bool parse_sequence(
+    bool parse_sequence_tuple(
         Parser const& parser, Iterator& first, Iterator const& last
       , Context const& context, RContext& rcontext, Attribute& attr
-      , traits::tuple_attribute)
+     , std::false_type)
     {
         typedef typename Parser::left_type Left;
         typedef typename Parser::right_type Right;
@@ -314,6 +364,53 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
             return true;
         first = save;
         return false;
+    }
+
+    template <typename Parser, typename Iterator, typename Context
+      , typename RContext, typename Attribute>
+    bool parse_sequence_tuple(
+        Parser const& parser, Iterator& first, Iterator const& last
+      , Context const& context, RContext& rcontext, Attribute& attr
+      , std::true_type)
+    {
+        typedef typename Parser::left_type Left;
+        typedef typename Parser::right_type Right;
+        typedef partition_attribute<Left, Right, Attribute, Context> partition;
+        typedef typename partition::l_pass l_pass;
+        typedef typename partition::r_pass r_pass;
+
+        typename partition::l_part l_part = partition::left(attr);
+        typename partition::r_part r_part = partition::right(attr);
+        typename l_pass::type l_attr = l_pass::call(l_part);
+        typename r_pass::type r_attr = r_pass::call(r_part);
+
+        // r_attr.clear();
+        
+        Iterator save = first;
+        if (parser.left.parse(first, last, context, rcontext, l_attr)
+            && parse_into_container(parser.right, first, last, context, rcontext, r_attr))
+            return true;
+        first = save;
+        return false;
+    }
+  
+    template <typename Parser, typename Iterator, typename Context
+      , typename RContext, typename Attribute>
+    bool parse_sequence(
+        Parser const& parser, Iterator& first, Iterator const& last
+      , Context const& context, RContext& rcontext, Attribute& attr
+      , traits::tuple_attribute)
+    {
+        typedef typename Parser::left_type Left;
+        typedef typename Parser::right_type Right;
+
+        bool const b =
+          !(fusion::result_of::size<Attribute>::value
+            == (sequence_size<Left, Context>::value + sequence_size<Right, Context>::value))
+            && (traits::has_attribute<Left, Context>::value &&
+                traits::has_attribute<Right, Context>::value);
+        return parse_sequence_tuple(parser, first, last, context, rcontext
+                                    , attr, std::integral_constant<bool, b>());
     }
 
     template <typename Parser, typename Iterator, typename Context
@@ -460,13 +557,17 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
                   "where type of first element is existing key in fusion::map and second element "
                   "is value to be stored under that key");
 
-            Attribute attr_;
-            if (!parse_sequence(parser
-			       , first, last, context, rcontext, attr_, traits::container_attribute()))
+            // Attribute attr_;
+            if (!detail::parse_into_container_base_impl<parser_type>
+                ::call_synthesize_x(parser, first, last, context, rcontext, attr
+                                    /*_, traits::container_attribute()*/
+                                    , mpl::false_()))
+            // if (!parse_sequence(parser
+	    //     	       , first, last, context, rcontext, attr_, traits::container_attribute()))
             {
                 return false;
             }
-            traits::append(attr, traits::begin(attr_), traits::end(attr_));
+            // traits::append(attr, traits::begin(attr_), traits::end(attr_));
             return true;
         }
 
@@ -517,12 +618,31 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         typename l_pass::type l_attr = l_pass::call(l_part);
         typename r_pass::type r_attr = r_pass::call(r_part);
 
-        OutputIterator save = first;
-        if (generator.left.generate(first, context, rcontext, l_attr)
-            && generator.right.generate(first, context, rcontext, r_attr))
-            return true;
-        first = save;
-        return false;
+        
+        
+        return generator.left.generate(first, context, rcontext, l_attr)
+          && generator.right.generate(first, context, rcontext, r_attr);
+    }
+
+    template <typename Generator, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_sequence(
+        Generator const& generator, OutputIterator& first
+      , Context const& context, RContext& rcontext, Attribute& attr
+      , traits::plain_attribute)
+    {
+        typedef typename Generator::left_type Left;
+        typedef typename Generator::right_type Right;
+        typedef typename traits::attribute_of<Left, Context>::type l_attr_type;
+        typedef typename traits::attribute_of<Right, Context>::type r_attr_type;
+        typedef traits::make_attribute<l_attr_type, Attribute> l_make_attribute;
+        typedef traits::make_attribute<r_attr_type, Attribute> r_make_attribute;
+
+        typename l_make_attribute::type l_attr = l_make_attribute::call(attr);
+        typename r_make_attribute::type r_attr = r_make_attribute::call(attr);
+
+        return generator.left.generate(first, context, rcontext, l_attr)
+          && generator.right.generate(first, context, rcontext, r_attr);
     }
   
 }}}}

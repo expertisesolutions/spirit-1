@@ -12,6 +12,7 @@
 #include <boost/spirit/home/x3/support/traits/container_traits.hpp>
 #include <boost/spirit/home/x3/support/traits/attribute_of.hpp>
 #include <boost/spirit/home/x3/core/detail/parse_into_container.hpp>
+#include <boost/spirit/home/x3/core/detail/generate_from_range.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
@@ -38,6 +39,20 @@ namespace boost { namespace spirit { namespace x3
                 ;
             return true;
         }
+        template <typename OutputIterator, typename Context, typename RContext, typename Attribute_>
+        bool generate(
+            OutputIterator sink
+          , Context& context, RContext& rcontext, Attribute_ const& attr) const
+        {
+            typename traits::range_iterator<Attribute_ const>::type
+              iterator = traits::begin(attr)
+              , last = traits::end(attr);
+            if (iterator == last || !this->subject.generate(sink, context, rcontext, *iterator++))
+                return false;
+
+            for (;iterator != last && this->subject.generate(sink, context, rcontext, *iterator++););
+            return true;
+        }      
     };
 
     template <typename Subject>

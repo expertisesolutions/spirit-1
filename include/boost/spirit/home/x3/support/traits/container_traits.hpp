@@ -89,21 +89,11 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     struct container_value<unused_type> : mpl::identity<unused_type> {};
 
     ///////////////////////////////////////////////////////////////////////////
+    template <typename R, typename Enable = void> struct range_iterator;
+  
     template <typename Container, typename Enable = void>
-    struct container_iterator
-        : mpl::identity<typename Container::iterator> {};
-
-    template <typename Container>
-    struct container_iterator<Container const>
-         : mpl::identity<typename Container::const_iterator> {};
-
-    template <>
-    struct container_iterator<unused_type>
-        : mpl::identity<unused_type const*> {};
-
-    template <>
-    struct container_iterator<unused_type const>
-        : mpl::identity<unused_type const*> {};
+    struct container_iterator : range_iterator<Container>
+    {};
 
     ///////////////////////////////////////////////////////////////////////////
     template <typename Container, typename T>
@@ -222,51 +212,24 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
 
     ///////////////////////////////////////////////////////////////////////////
     template <typename Container, typename Enable = void>
-    struct begin_container
+    struct clear_container
     {
-        static typename container_iterator<Container>::type call(Container& c)
+        static bool call(Container const& c)
         {
-            return c.begin();
+            return c.empty();
         }
     };
 
     template <typename Container>
-    inline typename container_iterator<Container>::type
-    begin(Container& c)
+    inline void clear(Container const& c)
     {
-        return begin_container<Container>::call(c);
+        clear_container<Container>::call(c);
     }
 
-    inline unused_type const*
-    begin(unused_type)
+    inline void clear(unused_type)
     {
-        return &unused;
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    template <typename Container, typename Enable = void>
-    struct end_container
-    {
-        static typename container_iterator<Container>::type call(Container& c)
-        {
-            return c.end();
-        }
-    };
-
-    template <typename Container>
-    inline typename container_iterator<Container>::type
-    end(Container& c)
-    {
-        return end_container<Container>::call(c);
-    }
-
-    inline unused_type const*
-    end(unused_type)
-    {
-        return &unused;
-    }
-
-
+  
     ///////////////////////////////////////////////////////////////////////////
     template <typename Iterator, typename Enable = void>
     struct deref_iterator

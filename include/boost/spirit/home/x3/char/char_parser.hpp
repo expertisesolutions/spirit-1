@@ -34,6 +34,19 @@ namespace boost { namespace spirit { namespace x3
             }
             return false;
         }
+        template <typename OutputIterator, typename Context, typename Attribute_>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, unused_type, Attribute_ const& attr) const
+        {
+            if(this->derived().test(attr, context))
+            {
+              *sink++ = attr;
+              return true;
+            }
+            else
+              return false;
+        }      
     };
 }}}
 

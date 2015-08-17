@@ -30,6 +30,13 @@ namespace boost { namespace spirit { namespace x3
             x3::skip_over(first, last, context);
             return predicate;
         }
+        template <typename OutputIterator, typename Context, typename Attribute_>
+        bool generate(
+            OutputIterator
+          , Context const&, unused_type, Attribute_ const&) const
+        {
+          return predicate;
+        }      
 
         bool predicate;
     };
@@ -50,6 +57,13 @@ namespace boost { namespace spirit { namespace x3
             x3::skip_over(first, last, context);
             return f(x3::get<rule_context_tag>(context));
         }
+        template <typename OutputIterator, typename Context, typename Attribute_>
+        bool generate(
+            OutputIterator
+          , Context const& context, unused_type, Attribute_ const&) const
+        {
+          return f(x3::get<rule_context_tag>(context));
+        }      
 
         F f;
     };
@@ -67,6 +81,13 @@ namespace boost { namespace spirit { namespace x3
             x3::skip_over(first, last, context);
             return true;
         }
+        template <typename OutputIterator, typename Context, typename Attribute_>
+        bool generate(
+            OutputIterator
+          , Context const&, unused_type, Attribute_ const&) const
+        {
+          return true;
+        }      
 
         inline semantic_predicate operator()(bool predicate) const
         {

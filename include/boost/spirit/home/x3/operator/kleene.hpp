@@ -10,6 +10,7 @@
 
 #include <boost/spirit/home/x3/core/parser.hpp>
 #include <boost/spirit/home/x3/support/traits/container_traits.hpp>
+#include <boost/spirit/home/x3/support/traits/range_traits.hpp>
 #include <boost/spirit/home/x3/support/traits/attribute_of.hpp>
 #include <boost/spirit/home/x3/core/detail/parse_into_container.hpp>
 
@@ -32,6 +33,18 @@ namespace boost { namespace spirit { namespace x3
             while (detail::parse_into_container(
                 this->subject, first, last, context, rcontext, attr))
                 ;
+            return true;
+        }
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate(
+            OutputIterator& sink
+          , Context const& context, RContext& rcontext, Attribute& attr) const
+        {
+            typename traits::range_iterator<Attribute>::type
+              iterator = traits::begin(attr)
+              , last = traits::end(attr);
+            for (;iterator != last && this->subject.generate(sink, context, rcontext, *iterator++););
             return true;
         }
     };

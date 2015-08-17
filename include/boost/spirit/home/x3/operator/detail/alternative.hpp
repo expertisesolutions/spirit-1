@@ -258,14 +258,39 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
     template <typename Generator, typename OutputIterator, typename Context
       , typename RContext, typename Attribute>
     bool generate_alternative(Generator const& p, OutputIterator& sink
+      , Context const& context, RContext& rcontext, Attribute& attr
+                              , std::true_type)
+    {
+      if (p.generate(sink, context, rcontext
+                     , boost::get<typename traits::attribute_of<Generator, Context>::type>(attr)))
+          return true;
+        return false;
+    }
+
+    template <typename Generator, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_alternative(Generator const& p, OutputIterator& sink
+      , Context const& context, RContext& rcontext, Attribute& attr
+                              , std::false_type)
+    {
+      return p.generate(sink, context, rcontext, attr);
+    }
+
+    template <typename Left, typename Right, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_alternative(alternative<Left, Right> const& p, OutputIterator& sink
       , Context const& context, RContext& rcontext, Attribute& attr)
     {
-        // typedef detail::pass_variant_attribute<Parser, Attribute, Context> pass;
-
-        // typename pass::type attr_ = pass::call(attr);
-        if (p.generate(sink, context, rcontext, attr))
-            return true;
-        return false;
+      return p.generate(sink, context, rcontext, attr);
+    }
+  
+    template <typename Generator, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_alternative(Generator const& p, OutputIterator& sink
+      , Context const& context, RContext& rcontext, Attribute& attr)
+    {
+      return generate_alternative(p, sink, context, rcontext
+                                  , attr, std::integral_constant<bool, traits::is_variant<Attribute>::value>());
     }
 
     template <typename Left, typename Right, typename Context, typename RContext>

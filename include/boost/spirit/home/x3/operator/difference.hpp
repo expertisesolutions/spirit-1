@@ -38,6 +38,18 @@ namespace boost { namespace spirit { namespace x3
             // Right fails, now try Left
             return this->left.parse(first, last, context, rcontext, attr);
         }
+        template <typename OutputIterator, typename Context, typename RContext, typename Attribute_>
+        bool generate(
+            OutputIterator sink
+          , Context& context, RContext& rcontext, Attribute_ const& attr) const
+        {
+            // Try Right first
+            if (this->right.generate(sink, context, rcontext, attr))
+                // Right succeeds, we fail.
+                return false;
+            // Right fails, now try Left
+            return this->left.generate(sink, context, rcontext, attr);
+        }      
 
         template <typename Left_, typename Right_>
         difference<Left_, Right_>
