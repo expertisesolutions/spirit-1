@@ -39,6 +39,16 @@ namespace boost { namespace spirit { namespace x3
         return generate_main(sink, p, attr);
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    template <typename OutputIterator, typename Generator>
+    inline bool
+    generate(
+        OutputIterator sink
+      , Generator const& p)
+    {
+        return generate_main(sink, p, unused);
+    }
+  
     // ///////////////////////////////////////////////////////////////////////////
     // template <typename Iterator, typename Generator, typename Attribute>
     // inline bool
