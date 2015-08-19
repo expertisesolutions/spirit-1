@@ -9,11 +9,13 @@
 
 #include <iostream>
 #include "test.hpp"
+#include "test_gen.hpp"
 
 int
 main()
 {
     using spirit_test::test;
+    using spirit_test::test_gen;
     using boost::spirit::x3::eps;
     using boost::spirit::x3::unused_type;
 
@@ -40,5 +42,25 @@ main()
         BOOST_TEST((test("", !eps(false_))));
     }
 
+    // Test generation
+    {
+        BOOST_TEST(test_gen("", eps));
+        BOOST_TEST(!test_gen("", !eps));
+
+        BOOST_TEST(test_gen("", eps(true)));
+        BOOST_TEST(!test_gen("", eps(false)));
+        BOOST_TEST(test_gen("", !eps(false)));
+    }
+
+    {   // test lazy semantic predicate
+
+        auto true_ = [](unused_type) { return true; };
+        auto false_ = [](unused_type) { return false; };
+
+        BOOST_TEST((test_gen("", eps(true_))));
+        BOOST_TEST((!test_gen("", eps(false_))));
+        BOOST_TEST((test_gen("", !eps(false_))));
+    }
+    
     return boost::report_errors();
 }

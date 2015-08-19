@@ -52,8 +52,8 @@ namespace boost { namespace spirit { namespace x3
             OutputIterator& first
           , Context const& context, RContext& rcontext, unused_type) const
         {
-          static_assert(!std::is_void<OutputIterator>::value, "");
-            return false;
+          return this->left.generate(first, context, rcontext, unused)
+            &&  this->right.generate(first, context, rcontext, unused);
         }
 
         template <typename OutputIterator, typename Context

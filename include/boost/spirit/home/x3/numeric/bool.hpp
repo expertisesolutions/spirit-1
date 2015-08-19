@@ -16,6 +16,7 @@ namespace boost { namespace spirit { namespace x3
 {
     template <typename T, typename Encoding, typename BoolPolicies = bool_policies<T>>
     struct bool_parser : parser<bool_parser<T, Encoding, BoolPolicies>>
+      , generator_base
     {
         typedef Encoding encoding;
         typedef T attribute_type;
@@ -50,11 +51,23 @@ namespace boost { namespace spirit { namespace x3
             return false;
         }
 
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, RContext& rcontext, Attribute& attr) const
+        {
+            if(attr)
+              return policies.generate_true(sink, context, rcontext);
+            else
+              return policies.generate_false(sink, context, rcontext);
+        }
+
         BoolPolicies policies;
     };
 
     template <typename T, typename Encoding, typename BoolPolicies = bool_policies<T>>
-    struct literal_bool_parser : parser<bool_parser<T, Encoding, BoolPolicies>>
+    struct literal_bool_parser : parser<bool_parser<T, Encoding, BoolPolicies>>, generator_base
     {
         typedef Encoding encoding;
         typedef T attribute_type;
@@ -98,6 +111,19 @@ namespace boost { namespace spirit { namespace x3
             return false;
         }
 
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, RContext& rcontext, Attribute& attr) const
+        {
+            if(attr == n_)
+                return attr ? policies.generate_true(sink, context, rcontext)
+                    : policies.generate_false(sink, context, rcontext);
+            
+            return false;
+        }
+        
         BoolPolicies policies;
         T n_;
     };

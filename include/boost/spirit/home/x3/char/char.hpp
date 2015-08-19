@@ -148,6 +148,65 @@ namespace boost { namespace spirit { namespace x3
             }
         };
 
+        template <>
+        struct as_generator<char>
+        {
+            typedef literal_char<
+                char_encoding::standard, unused_type>
+            type;
+
+            typedef type value_type;
+
+            static type call(char ch)
+            {
+                return { ch };
+            }
+        };
+
+        template <>
+        struct as_generator<wchar_t>
+        {
+            typedef literal_char<
+                char_encoding::standard_wide, unused_type>
+            type;
+
+            typedef type value_type;
+
+            static type call(wchar_t ch)
+            {
+                return { ch };
+            }
+        };
+
+        template <>
+        struct as_generator<char [2]>
+        {
+            typedef literal_char<
+                char_encoding::standard, unused_type>
+            type;
+
+            typedef type value_type;
+
+            static type call(char const ch[])
+            {
+                return { ch[0] };
+            }
+        };
+
+        template <>
+        struct as_generator<wchar_t [2]>
+        {
+            typedef literal_char<
+                char_encoding::standard_wide, unused_type>
+            type;
+
+            typedef type value_type;
+
+            static type call(wchar_t const ch[] )
+            {
+                return { ch[0] };
+            }
+        };
     }
 
 }}}

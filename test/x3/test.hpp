@@ -9,6 +9,7 @@
 
 #include <boost/spirit/home/x3/core/parse.hpp>
 #include <iostream>
+#include "test_gen.hpp"
 
 namespace spirit_test
 {

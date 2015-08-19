@@ -17,7 +17,7 @@
 namespace boost { namespace spirit { namespace x3
 {
     template <typename Subject>
-    struct kleene : unary_parser<Subject, kleene<Subject>>
+    struct kleene : unary_parser<Subject, kleene<Subject>>, generator_base
     {
         typedef unary_parser<Subject, kleene<Subject>> base_type;
         static bool const handles_container = true;

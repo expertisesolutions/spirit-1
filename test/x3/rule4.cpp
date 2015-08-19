@@ -12,6 +12,7 @@
 #include <boost/spirit/home/x3.hpp>
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at.hpp>
+#include <boost/optional/optional_io.hpp>
 
 #include <string>
 #include <cstring>

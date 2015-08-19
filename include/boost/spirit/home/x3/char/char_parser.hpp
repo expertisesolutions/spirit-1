@@ -11,6 +11,7 @@
 #include <boost/spirit/home/x3/core/skip_over.hpp>
 #include <boost/spirit/home/x3/support/traits/move_to.hpp>
 #include <boost/spirit/home/x3/support/no_case.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
@@ -18,7 +19,7 @@ namespace boost { namespace spirit { namespace x3
     // The base char_parser
     ///////////////////////////////////////////////////////////////////////////
     template <typename Derived>
-    struct char_parser : parser<Derived>
+    struct char_parser : parser<Derived>, generator_base
     {
         template <typename Iterator, typename Context, typename Attribute>
         bool parse(
@@ -41,11 +42,17 @@ namespace boost { namespace spirit { namespace x3
         {
             if(this->derived().test(attr, context))
             {
-              *sink++ = attr;
-              return true;
+                *sink++ = attr;
+                return true;
             }
-            else
-              return false;
+            return false;
+        }      
+        template <typename OutputIterator, typename Context>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, unused_type, unused_type) const
+        {
+            return false;
         }      
     };
 }}}

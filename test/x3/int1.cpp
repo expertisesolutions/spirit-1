@@ -15,6 +15,7 @@ int
 main()
 {
     using spirit_test::test;
+    using spirit_test::test_gen;
     using spirit_test::test_attr;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -180,6 +181,83 @@ main()
 
         BOOST_TEST(test_attr("-123456", int_, i));
         BOOST_TEST(boost::fusion::at_c<0>(i) == -123456);
+    }
+
+    // Generator
+    {
+        using namespace boost::spirit::x3::ascii;
+        using boost::spirit::x3::int_;
+
+        ///////////////////////////////////////////////////////////////////////
+        // this is currently ambiguous with character literals
+        // BOOST_TEST(test_gen("0", 0));
+        // BOOST_TEST(test_gen("123", 123));
+        // BOOST_TEST(test_gen("-123", -123));
+
+        BOOST_TEST(test_gen("0", int_, 0));
+        BOOST_TEST(test_gen("123", int_, 123));
+        BOOST_TEST(test_gen("-123", int_, -123));
+
+        ///////////////////////////////////////////////////////////////////////
+        // BOOST_TEST(test_gen("0", int_(0)));
+        // BOOST_TEST(test_gen("123", int_(123)));
+        // BOOST_TEST(test_gen("-123", int_(-123)));
+
+    }
+
+    {   // literals, make sure there are no ambiguities
+        using boost::spirit::x3::int_;
+        using boost::spirit::x3::lit;
+
+//         BOOST_TEST(test("0", lit(short(0))));
+//         BOOST_TEST(test("0", lit(0)));
+//         BOOST_TEST(test("0", lit(0L)));
+// #ifdef BOOST_HAS_LONG_LONG
+//         BOOST_TEST(test("0", lit(0LL)));
+// #endif
+
+//         BOOST_TEST(test("0", lit((unsigned short)0)));
+//         BOOST_TEST(test("0", lit(0U)));
+//         BOOST_TEST(test("0", lit(0UL)));
+// #ifdef BOOST_HAS_LONG_LONG
+//         BOOST_TEST(test("0", lit(0ULL)));
+// #endif
+
+        BOOST_TEST(test("a", lit('a')));
+        BOOST_TEST(test("a", 'a'));
+        BOOST_TEST(test(L"a", L'a'));
+    }
+
+    // {   // lazy numerics
+    //     using namespace boost::phoenix;
+
+    //     BOOST_TEST(test("0", int_(val(0))));
+    //     BOOST_TEST(test("123", int_(val(123))));
+    //     BOOST_TEST(test("-123", int_(val(-123))));
+
+    //     int i1 = 0, i2 = 123, i3 = -123;
+    //     BOOST_TEST(test("0", int_(ref(i1))));
+    //     BOOST_TEST(test("123", int_(ref(i2))));
+    //     BOOST_TEST(test("-123", int_(ref(i3))));
+    // }
+    
+    {
+        using namespace boost::spirit::x3::ascii;
+        using boost::spirit::x3::uint_;
+        using boost::spirit::x3::hex;
+        using boost::spirit::x3::oct;
+        using boost::spirit::x3::bin;
+        
+        ///////////////////////////////////////////////////////////////////////
+        // BOOST_TEST(test_gen("1234", uint_(1234)));
+        // BOOST_TEST(test_gen("ff", hex(0xff)));
+        // BOOST_TEST(test_gen("1234", oct(01234)));
+        // BOOST_TEST(test_gen("11110000", bin(0xf0)));
+
+        BOOST_TEST(test_gen("1234", uint_, 1234));
+        BOOST_TEST(test_gen("ff", hex, 0xff));
+        BOOST_TEST(test_gen("1234", oct, 01234));
+        BOOST_TEST(test_gen("11110000", bin, 0xf0));
     }
 
     return boost::report_errors();

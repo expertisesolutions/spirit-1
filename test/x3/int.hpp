@@ -13,6 +13,7 @@
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/spirit/home/x3/numeric/int.hpp>
 #include "test.hpp"
+#include "test_gen.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

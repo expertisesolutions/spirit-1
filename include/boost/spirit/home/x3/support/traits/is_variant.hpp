@@ -36,6 +36,21 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     struct is_variant<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>>
       : mpl::true_
     {};
+
+    template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    struct is_variant<const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>>
+      : mpl::true_
+    {};
+
+    template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    struct is_variant<volatile boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>>
+      : mpl::true_
+    {};
+
+    template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    struct is_variant<const volatile boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>>
+      : mpl::true_
+    {};
 }}}}
 
 #endif

@@ -16,6 +16,7 @@
 #include <iostream>
 #include <vector>
 #include "test.hpp"
+#include "test_gen.hpp"
 
 struct di_ignore
 {
@@ -41,6 +42,7 @@ int
 main()
 {
     using spirit_test::test;
+    using spirit_test::test_gen;
     using spirit_test::test_attr;
 
     using boost::spirit::x3::attr;
@@ -230,5 +232,21 @@ main()
         BOOST_TEST(boost::get<char>(&boost::fusion::front(attr_)) == nullptr);
     }
 
+    // test generation
+    {
+        BOOST_TEST(test_gen("x", char_('x') | char_('i')));
+        BOOST_TEST(test_gen("xi", char_('x') >> char_('i') | char_('i')));
+        BOOST_TEST(test_gen("i", char_('i') | char_('x') >> char_('i')));
+
+        //BOOST_TEST(test("x", buffer[char_('x')] | char_('i')));
+
+        boost::variant<int, char> v (10);
+        //BOOST_TEST(test_gen("10", char_ | int_, v));
+        // BOOST_TEST(test_gen("10", int_ | char_, v));
+        // BOOST_TEST(test_gen("a", lit('a') | char_ | int_, v));
+        // BOOST_TEST(test_gen("a", char_ | lit('a') | int_, v));
+        // BOOST_TEST(test_gen("10", int_ | lit('a') | char_, v));
+    }
+    
     return boost::report_errors();
 }

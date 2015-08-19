@@ -9,13 +9,14 @@
 
 #include <boost/spirit/home/x3/core/skip_over.hpp>
 #include <boost/spirit/home/x3/core/parser.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
     struct rule_context_tag;
 
-    struct semantic_predicate : parser<semantic_predicate>
+    struct semantic_predicate : parser<semantic_predicate>, generator_base
     {
         typedef unused_type attribute_type;
         static bool const has_attribute = false;
@@ -42,7 +43,7 @@ namespace boost { namespace spirit { namespace x3
     };
 
     template <typename F>
-    struct lazy_semantic_predicate : parser<lazy_semantic_predicate<F>>
+    struct lazy_semantic_predicate : parser<lazy_semantic_predicate<F>>, generator_base
     {
         typedef unused_type attribute_type;
         static bool const has_attribute = false;
@@ -68,7 +69,7 @@ namespace boost { namespace spirit { namespace x3
         F f;
     };
 
-    struct eps_parser : parser<eps_parser>
+    struct eps_parser : parser<eps_parser>, generator_base
     {
         typedef unused_type attribute_type;
         static bool const has_attribute = false;

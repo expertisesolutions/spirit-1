@@ -421,7 +421,7 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     ///////////////////////////////////////////////////////////////////////
     namespace detail
     {
-        template <typename CharEncoding, typename Tag, bool radix_less_than_10>
+        template </*typename CharEncoding,*/ typename Tag, bool radix_less_than_10>
         struct convert_digit
         {
             static int call(unsigned n)
@@ -436,7 +436,7 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
         };
 
         template <>
-        struct convert_digit<unused_type, unused_type, false>
+        struct convert_digit</*unused_type,*/ unused_type, false>
         {
             static int call(unsigned n)
             {
@@ -446,8 +446,8 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
             }
         };
 
-        template <typename CharEncoding, typename Tag>
-        struct convert_digit<CharEncoding, Tag, true>
+      template </*typename CharEncoding,*/ typename Tag>
+      struct convert_digit</*CharEncoding,*/ Tag, true>
         {
             static int call(unsigned n)
             {
@@ -456,9 +456,9 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
         };
     }
 
-    template <unsigned Radix, typename CharEncoding, typename Tag>
+  template <unsigned Radix/*, typename CharEncoding*/, typename Tag>
     struct convert_digit
-      : detail::convert_digit<CharEncoding, Tag, (Radix <= 10) ? true : false>
+    : detail::convert_digit</*CharEncoding,*/ Tag, (Radix <= 10) ? true : false>
     {};
 
     ///////////////////////////////////////////////////////////////////////
@@ -577,11 +577,11 @@ namespace boost { namespace spirit { namespace x3
     /**/
 
     template <
-        unsigned Radix, typename CharEncoding = unused_type
+      unsigned Radix//, typename CharEncoding = unused_type
       , typename Tag = unused_type>
     struct int_inserter
     {
-        typedef traits::convert_digit<Radix, CharEncoding, Tag> radix_type;
+        typedef traits::convert_digit<Radix/*, CharEncoding*/, Tag> radix_type;
         typedef traits::divide<Radix> divide_type;
         typedef traits::remainder<Radix> remainder_type;
 
@@ -682,11 +682,11 @@ namespace boost { namespace spirit { namespace x3
     //
     ///////////////////////////////////////////////////////////////////////////
     template <
-        unsigned Radix, typename CharEncoding = unused_type
+      unsigned Radix/*, typename CharEncoding = unused_type*/
       , typename Tag = unused_type>
-    struct uint_inserter : int_inserter<Radix, CharEncoding, Tag>
+    struct uint_inserter : int_inserter<Radix/*, CharEncoding*/, Tag>
     {
-        typedef int_inserter<Radix, CharEncoding, Tag> base_type;
+      typedef int_inserter<Radix/*, CharEncoding*/, Tag> base_type;
 
         //  Common code for integer string representations
         template <typename OutputIterator, typename T>

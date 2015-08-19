@@ -9,11 +9,13 @@
 
 #include <iostream>
 #include "test.hpp"
+#include "test_gen.hpp"
 
 int
 main()
 {
     using spirit_test::test;
+    using spirit_test::test_gen;
     using boost::spirit::x3::eol;
 
     {
@@ -26,6 +28,11 @@ main()
 
     {
         BOOST_TEST(what(eol) == "eol");
+    }
+
+    {
+        BOOST_TEST((test_gen("\n", eol)));
+        BOOST_TEST((test_gen("\n", eol)));
     }
 
     return boost::report_errors();

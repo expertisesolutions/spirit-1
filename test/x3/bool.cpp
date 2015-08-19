@@ -79,5 +79,18 @@ int main()
         BOOST_TEST(!test_attr("fasle", test_bool, b));
     }
 
+    // testing generation 
+    {
+        using boost::spirit::x3::true_;
+        using boost::spirit::x3::false_;
+        using spirit_test::test_gen;
+        
+        BOOST_TEST(test_gen("false", bool_, false));
+        BOOST_TEST(test_gen("true", bool_, true));
+        BOOST_TEST(test_gen("false", false_, false));
+        BOOST_TEST(test_gen("true", true_, true));
+    }
+   
+    
     return boost::report_errors();
 }

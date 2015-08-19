@@ -9,6 +9,7 @@
 #define SPIRIT_QI_BOOL_POLICIES_SEP_29_2009_0710AM
 
 #include <boost/spirit/home/x3/string/detail/string_parse.hpp>
+#include <boost/spirit/home/x3/string/detail/string_generate.hpp>
 #include <boost/spirit/home/x3/support/traits/move_to.hpp>
 
 namespace boost { namespace spirit { namespace x3
@@ -41,6 +42,19 @@ namespace boost { namespace spirit { namespace x3
                 return true;
             }
             return false;
+        }
+
+        template <typename OutputIterator, typename Context, typename RContext>
+        static bool
+        generate_false(OutputIterator sink, Context const& context, RContext& rcontext)
+        {
+            return detail::string_generate("false", sink, unused);
+        }
+        template <typename OutputIterator, typename Context, typename RContext>
+        static bool
+        generate_true(OutputIterator sink, Context const& context, RContext& rcontext)
+        {
+            return detail::string_generate("true", sink, unused);
         }
     };
 }}}

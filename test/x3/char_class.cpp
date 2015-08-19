@@ -17,11 +17,13 @@
 
 #include <iostream>
 #include "test.hpp"
+#include "test_gen.hpp"
 
 int
 main()
 {
     using spirit_test::test;
+    using spirit_test::test_gen;
     using spirit_test::test_attr;
 
     using boost::spirit::x3::unused_type;
@@ -116,7 +118,7 @@ main()
     }
 
     {
-        using namespace boost::spirit::x3::standard;
+        using namespace boost::spirit::x3::ascii;
         BOOST_TEST(test("1", alnum));
         BOOST_TEST(!test(" ", alnum));
         BOOST_TEST(!test("1", alpha));
@@ -249,5 +251,167 @@ main()
         BOOST_TEST(ch == 'A');
     }
 
+    // generators
+    {
+        using namespace boost::spirit::x3::ascii;
+        BOOST_TEST(test_gen("a", alpha, 'a'));
+        BOOST_TEST(!test_gen("", alpha, '1'));
+        BOOST_TEST(test_gen(" ", blank, ' '));
+        BOOST_TEST(!test_gen("", blank, 'x'));
+        BOOST_TEST(test_gen("1", digit, '1'));
+        BOOST_TEST(!test_gen("", digit, 'x'));
+        BOOST_TEST(test_gen("a", lower, 'a'));
+        BOOST_TEST(!test_gen("", lower, 'A'));
+        BOOST_TEST(test_gen("!", punct, '!'));
+        BOOST_TEST(!test_gen("", punct, 'x'));
+        BOOST_TEST(!test_gen(" ", space));
+        BOOST_TEST(test_gen(" ", space, ' '));
+        BOOST_TEST(!test_gen("", space, '\n'));
+        BOOST_TEST(test_gen("\r", space, '\r'));
+        BOOST_TEST(test_gen("\t", space, '\t'));
+        BOOST_TEST(test_gen("A", upper, 'A'));
+        BOOST_TEST(!test_gen("", upper, 'a'));
+        BOOST_TEST(test_gen("A", xdigit, 'A'));
+        BOOST_TEST(test_gen("0", xdigit, '0'));
+        BOOST_TEST(test_gen("f", xdigit, 'f'));
+        BOOST_TEST(!test_gen("", xdigit, 'g'));
+    }
+
+    {
+        using namespace boost::spirit::x3::ascii;
+        BOOST_TEST(!test_gen("", ~alpha, 'a'));
+        BOOST_TEST(test_gen("1", ~alpha, '1'));
+        BOOST_TEST(!test_gen("", ~blank, ' '));
+        BOOST_TEST(test_gen("x", ~blank, 'x'));
+        BOOST_TEST(!test_gen("", ~digit, '1'));
+        BOOST_TEST(test_gen("x", ~digit, 'x'));
+        BOOST_TEST(!test_gen("", ~lower, 'a'));
+        BOOST_TEST(test_gen("A", ~lower, 'A'));
+        BOOST_TEST(!test_gen("", ~punct, '!'));
+        BOOST_TEST(test_gen("x", ~punct, 'x'));
+        BOOST_TEST(!test_gen("", ~space));
+        BOOST_TEST(!test_gen("", ~space, ' '));
+        BOOST_TEST(!test_gen("", ~space, '\r'));
+        BOOST_TEST(!test_gen("", ~space, '\t'));
+        BOOST_TEST(!test_gen("", ~upper, 'A'));
+        BOOST_TEST(test_gen("a", ~upper, 'a'));
+        BOOST_TEST(!test_gen("", ~xdigit, 'A'));
+        BOOST_TEST(!test_gen("", ~xdigit, '0'));
+        BOOST_TEST(!test_gen("", ~xdigit, 'f'));
+        BOOST_TEST(test_gen("g", ~xdigit, 'g'));
+    }
+
+    {
+        using namespace boost::spirit::x3::ascii;
+        BOOST_TEST(test_gen("a", ~~alpha, 'a'));
+        BOOST_TEST(!test_gen("", ~~alpha, '1'));
+        BOOST_TEST(test_gen(" ", ~~blank, ' '));
+        BOOST_TEST(!test_gen("", ~~blank, 'x'));
+        BOOST_TEST(test_gen("1", ~~digit, '1'));
+        BOOST_TEST(!test_gen("", ~~digit, 'x'));
+        BOOST_TEST(test_gen("a", ~~lower, 'a'));
+        BOOST_TEST(!test_gen("", ~~lower, 'A'));
+        BOOST_TEST(test_gen("!", ~~punct, '!'));
+        BOOST_TEST(!test_gen("", ~~punct, 'x'));
+        BOOST_TEST(!test_gen(" ", ~~space));
+        BOOST_TEST(test_gen(" ", ~~space, ' '));
+        BOOST_TEST(!test_gen("", ~~space, '\n'));
+        BOOST_TEST(test_gen("\r", ~~space, '\r'));
+        BOOST_TEST(test_gen("\t", ~~space, '\t'));
+        BOOST_TEST(test_gen("A", ~~upper, 'A'));
+        BOOST_TEST(!test_gen("", ~~upper, 'a'));
+        BOOST_TEST(test_gen("A", ~~xdigit, 'A'));
+        BOOST_TEST(test_gen("0", ~~xdigit, '0'));
+        BOOST_TEST(test_gen("f", ~~xdigit, 'f'));
+        BOOST_TEST(!test_gen("", ~~xdigit, 'g'));
+    }
+
+    {
+        using namespace boost::spirit::x3::iso8859_1;
+        BOOST_TEST(test_gen("a", alpha, 'a'));
+        BOOST_TEST(!test_gen("", alpha, '1'));
+        BOOST_TEST(test_gen(" ", blank, ' '));
+        BOOST_TEST(!test_gen("", blank, 'x'));
+        BOOST_TEST(test_gen("1", digit, '1'));
+        BOOST_TEST(!test_gen("", digit, 'x'));
+        BOOST_TEST(test_gen("a", lower, 'a'));
+        BOOST_TEST(!test_gen("", lower, 'A'));
+        BOOST_TEST(test_gen("!", punct, '!'));
+        BOOST_TEST(!test_gen("", punct, 'x'));
+        BOOST_TEST(!test_gen(" ", space));
+        BOOST_TEST(test_gen(" ", space, ' '));
+        BOOST_TEST(!test_gen("", space, '\n'));
+        BOOST_TEST(test_gen("\r", space, '\r'));
+        BOOST_TEST(test_gen("\t", space, '\t'));
+        BOOST_TEST(test_gen("A", upper, 'A'));
+        BOOST_TEST(!test_gen("", upper, 'a'));
+        BOOST_TEST(test_gen("A", xdigit, 'A'));
+        BOOST_TEST(test_gen("0", xdigit, '0'));
+        BOOST_TEST(test_gen("f", xdigit, 'f'));
+        BOOST_TEST(!test_gen("", xdigit, 'g'));
+
+
+// needed for VC7.1 only
+#if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1310))
+#pragma setlocale("german")
+#endif
+        BOOST_TEST(test_gen("é", alpha, 'é'));
+        BOOST_TEST(test_gen("é", lower, 'é'));
+        BOOST_TEST(!test_gen("", upper, 'é'));
+#if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1310))
+#pragma setlocale("")
+#endif
+    }
+
+    {
+      using namespace boost::spirit::x3::standard;
+        BOOST_TEST(test_gen("a", alpha, 'a'));
+        BOOST_TEST(!test_gen("", alpha, '1'));
+        BOOST_TEST(test_gen(" ", blank, ' '));
+        BOOST_TEST(!test_gen("", blank, 'x'));
+        BOOST_TEST(test_gen("1", digit, '1'));
+        BOOST_TEST(!test_gen("", digit, 'x'));
+        BOOST_TEST(test_gen("a", lower, 'a'));
+        BOOST_TEST(!test_gen("", lower, 'A'));
+        BOOST_TEST(test_gen("!", punct, '!'));
+        BOOST_TEST(!test_gen("", punct, 'x'));
+        BOOST_TEST(!test_gen(" ", space));
+        BOOST_TEST(test_gen(" ", space, ' '));
+        BOOST_TEST(!test_gen("", space, '\n'));
+        BOOST_TEST(test_gen("\r", space, '\r'));
+        BOOST_TEST(test_gen("\t", space, '\t'));
+        BOOST_TEST(test_gen("A", upper, 'A'));
+        BOOST_TEST(!test_gen("", upper, 'a'));
+        BOOST_TEST(test_gen("A", xdigit, 'A'));
+        BOOST_TEST(test_gen("0", xdigit, '0'));
+        BOOST_TEST(test_gen("f", xdigit, 'f'));
+        BOOST_TEST(!test_gen("", xdigit, 'g'));
+    }
+
+    {
+        using namespace boost::spirit::x3::standard_wide;
+        BOOST_TEST(test_gen(L"a", alpha, L'a'));
+        BOOST_TEST(!test_gen(L"", alpha, L'1'));
+        BOOST_TEST(test_gen(L" ", blank, L' '));
+        BOOST_TEST(!test_gen(L"", blank, L'x'));
+        BOOST_TEST(test_gen(L"1", digit, L'1'));
+        BOOST_TEST(!test_gen(L"", digit, L'x'));
+        BOOST_TEST(test_gen(L"a", lower, L'a'));
+        BOOST_TEST(!test_gen(L"", lower, L'A'));
+        BOOST_TEST(test_gen(L"!", punct, L'!'));
+        BOOST_TEST(!test_gen(L"", punct, L'x'));
+        BOOST_TEST(!test_gen(L" ", space));
+        BOOST_TEST(test_gen(L" ", space, L' '));
+        BOOST_TEST(!test_gen(L"", space, L'\n'));
+        BOOST_TEST(test_gen(L"\r", space, L'\r'));
+        BOOST_TEST(test_gen(L"\t", space, L'\t'));
+        BOOST_TEST(test_gen(L"A", upper, L'A'));
+        BOOST_TEST(!test_gen(L"", upper, L'a'));
+        BOOST_TEST(test_gen(L"A", xdigit, L'A'));
+        BOOST_TEST(test_gen(L"0", xdigit, L'0'));
+        BOOST_TEST(test_gen(L"f", xdigit, L'f'));
+        BOOST_TEST(!test_gen(L"", xdigit, L'g'));
+    }
+    
     return boost::report_errors();
 }

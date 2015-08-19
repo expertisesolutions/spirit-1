@@ -9,8 +9,10 @@
 #define BOOST_SPIRIT_X3_UINT_APR_17_2006_0901AM
 
 #include <boost/spirit/home/x3/core/parser.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 #include <boost/spirit/home/x3/core/skip_over.hpp>
 #include <boost/spirit/home/x3/support/numeric_utils/extract_int.hpp>
+#include <boost/spirit/home/x3/numeric/detail/numeric_utils.hpp>
 #include <cstdint>
 
 namespace boost { namespace spirit { namespace x3
@@ -22,6 +24,7 @@ namespace boost { namespace spirit { namespace x3
       , unsigned MinDigits = 1
       , int MaxDigits = -1>
     struct uint_parser : parser<uint_parser<T, Radix, MinDigits, MaxDigits>>
+      , generator_base
     {
         // check template parameter 'Radix' for validity
         static_assert(
@@ -38,6 +41,14 @@ namespace boost { namespace spirit { namespace x3
             typedef extract_uint<T, Radix, MinDigits, MaxDigits> extract;
             x3::skip_over(first, last, context);
             return extract::call(first, last, attr);
+        }
+        template <typename OutputIterator, typename Context, typename Attribute>
+        bool generate(OutputIterator sink
+          , Context const& context, unused_type, Attribute& attr) const
+        {
+          return 
+            uint_inserter<Radix/*, CharEncoding*//*char_encoding::standard*/>::call(sink
+                      , traits::get_absolute_value(attr));
         }
     };
 

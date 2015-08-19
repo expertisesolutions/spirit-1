@@ -12,10 +12,10 @@
 
 namespace boost { namespace spirit { namespace x3 { namespace detail
 {
-    template <typename Char, typename OutputIterator, typename Attribute, typename CaseCompareFunc>
+    template <typename Char, typename OutputIterator, typename Attribute>
     inline bool string_generate(
         Char const* str
-      , OutputIterator sink, Attribute const& attr, CaseCompareFunc const& compare) 
+      , OutputIterator sink, Attribute const& attr) 
     {
         Char const* str_compare = str;
         Char ch = *str_compare;
@@ -39,10 +39,10 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         return true;
     }
 
-    template <typename Char, typename OutputIterator, typename CaseCompareFunc>
+    template <typename Char, typename OutputIterator>
     inline bool string_generate(
         Char const* str
-      , OutputIterator sink, unused_type const, CaseCompareFunc const& compare) 
+      , OutputIterator sink, unused_type const) 
     {
         Char ch = *str;
         
@@ -55,10 +55,10 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         return true;
     }
   
-    template <typename String, typename OutputIterator, typename Attribute, typename CaseCompareFunc>
+    template <typename String, typename OutputIterator, typename Attribute>
     inline bool string_generate(
         String const& str
-      , OutputIterator sink, Attribute const& attr, CaseCompareFunc const& compare)
+      , OutputIterator sink, Attribute const& attr)
     {
         typename String::const_iterator stri = str.begin();
         typename String::const_iterator str_last = str.end();

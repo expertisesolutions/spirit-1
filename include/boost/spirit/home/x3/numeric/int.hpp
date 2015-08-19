@@ -47,7 +47,7 @@ namespace boost { namespace spirit { namespace x3
         {
           return sign_inserter::call(sink, traits::test_zero(attr)
                       , traits::test_negative(attr), /*force_sign*/false) &&
-            int_inserter<Radix, /*CharEncoding*/char_encoding::standard>::call(sink
+            int_inserter<Radix/*, CharEncoding*//*char_encoding::standard*/>::call(sink
                       , traits::get_absolute_value(attr));
         }
     };

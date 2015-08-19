@@ -155,6 +155,7 @@ main()
                 = char_ >> char_ >> char_ >> char_ >> char_ >> char_;
             s.clear();
             BOOST_TEST(test("abcdef", r[f]));
+            std::cout << "s: " << s << std::endl;
             BOOST_TEST(s == "abcdef");
         }
     }

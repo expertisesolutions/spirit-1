@@ -39,11 +39,10 @@ namespace boost { namespace spirit { namespace x3
         template <typename Char, typename Context>
         bool test(Char ch_, Context& context) const
         {
-
             char_type ch = char_type(ch_);  // optimize for token based parsing
             return ((sizeof(Char) <= sizeof(char_type)) || encoding::ischar(ch_))
-                        && (get_case_compare<encoding>(context)(ch, from) > 0 )
-                        && (get_case_compare<encoding>(context)(ch , to) < 0 );
+                        && (get_case_compare<encoding>(context)(ch, from) >= 0 )
+                        && (get_case_compare<encoding>(context)(ch , to) <= 0 );
         }
 
         char_type from, to;

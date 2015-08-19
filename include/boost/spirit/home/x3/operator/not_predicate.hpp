@@ -12,7 +12,7 @@
 namespace boost { namespace spirit { namespace x3
 {
     template <typename Subject>
-    struct not_predicate : unary_parser<Subject, not_predicate<Subject>>
+    struct not_predicate : unary_parser<Subject, not_predicate<Subject>>, generator_base
     {
         typedef unary_parser<Subject, not_predicate<Subject>> base_type;
 
@@ -29,6 +29,14 @@ namespace boost { namespace spirit { namespace x3
         {
             Iterator i = first;
             return !this->subject.parse(i, last, context, rcontext, unused);
+        }
+
+        template <typename OutputIterator, typename Context
+          , typename RContext, typename Attribute>
+        bool generate(OutputIterator sink
+          , Context const& context, RContext& rcontext, Attribute& /*attr*/) const
+        {
+            return !this->subject.generate(sink, context, rcontext, unused);
         }
     };
 

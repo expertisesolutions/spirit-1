@@ -10,13 +10,14 @@
 
 #include <boost/spirit/home/x3/core/skip_over.hpp>
 #include <boost/spirit/home/x3/core/parser.hpp>
+#include <boost/spirit/home/x3/core/generator.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
-    struct eol_parser : parser<eol_parser>
+    struct eol_parser : parser<eol_parser>, generator_base
     {
-         typedef unused_type attribute_type;
+        typedef unused_type attribute_type;
         static bool const has_attribute = false;
 
         template <typename Iterator, typename Context, typename Attribute>
@@ -39,6 +40,26 @@ namespace boost { namespace spirit { namespace x3
 
             if (matched) first = iter;
             return matched;
+        }
+        template <typename OutputIterator, typename Context, typename Attribute_>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, unused_type, Attribute_ const& attr) const
+        {
+            if(attr == '\n')
+            {
+                *sink++ = attr;
+                return true;
+            }
+            return false;
+        }      
+        template <typename OutputIterator, typename Context>
+        bool generate(
+            OutputIterator sink
+          , Context const& context, unused_type, unused_type) const
+        {
+            *sink++ = '\n';
+            return true;
         }
     };
 

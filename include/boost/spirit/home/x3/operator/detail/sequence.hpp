@@ -37,6 +37,8 @@
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_same.hpp>
 
+#include <iostream>
+
 namespace boost { namespace spirit { namespace x3
 {
     template <typename Left, typename Right>
@@ -383,7 +385,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         typename partition::r_part r_part = partition::right(attr);
         typename l_pass::type l_attr = l_pass::call(l_part);
         typename r_pass::type r_attr = r_pass::call(r_part);
-
+        
         // r_attr.clear();
         
         Iterator save = first;
@@ -557,17 +559,17 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
                   "where type of first element is existing key in fusion::map and second element "
                   "is value to be stored under that key");
 
-            // Attribute attr_;
-            if (!detail::parse_into_container_base_impl<parser_type>
-                ::call_synthesize_x(parser, first, last, context, rcontext, attr
-                                    /*_, traits::container_attribute()*/
-                                    , mpl::false_()))
-            // if (!parse_sequence(parser
-	    //     	       , first, last, context, rcontext, attr_, traits::container_attribute()))
+            Attribute attr_;
+            // if (!detail::parse_into_container_base_impl<parser_type>
+            //     ::call_synthesize_x(parser, first, last, context, rcontext, attr
+            //                         /*_, traits::container_attribute()*/
+            //                         , mpl::false_()))
+            if (!parse_sequence(parser
+	        	       , first, last, context, rcontext, attr_, traits::container_attribute()))
             {
                 return false;
             }
-            // traits::append(attr, traits::begin(attr_), traits::end(attr_));
+            traits::append(attr, traits::begin(attr_), traits::end(attr_));
             return true;
         }
 
@@ -603,10 +605,25 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
     template <typename Generator, typename OutputIterator, typename Context
       , typename RContext, typename Attribute>
     bool generate_sequence(
+        Generator const& generator , OutputIterator first
+      , Context const& context, RContext& rcontext, Attribute& attr
+      , traits::container_attribute)
+    {
+        static_assert(false, "lacking generate_from_sequence");
+        // if (parse_into_container(parser.left, first, last, context, rcontext, attr)
+        //     && parse_into_container(parser.right, first, last, context, rcontext, attr))
+        //     return true;
+        return false;
+    }
+  
+    template <typename Generator, typename OutputIterator, typename Context
+      , typename RContext, typename Attribute>
+    bool generate_sequence(
         Generator const& generator, OutputIterator& first
       , Context const& context, RContext& rcontext, Attribute& attr
       , traits::tuple_attribute)
     {
+        std::cout << "generate sequence tuple attribute" << std::endl;
         typedef typename Generator::left_type Left;
         typedef typename Generator::right_type Right;
         typedef partition_attribute<Left, Right, Attribute, Context> partition;
@@ -618,8 +635,6 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         typename l_pass::type l_attr = l_pass::call(l_part);
         typename r_pass::type r_attr = r_pass::call(r_part);
 
-        
-        
         return generator.left.generate(first, context, rcontext, l_attr)
           && generator.right.generate(first, context, rcontext, r_attr);
     }
@@ -631,6 +646,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
       , Context const& context, RContext& rcontext, Attribute& attr
       , traits::plain_attribute)
     {
+        std::cout << "generate sequence plain attribute" << std::endl;
         typedef typename Generator::left_type Left;
         typedef typename Generator::right_type Right;
         typedef typename traits::attribute_of<Left, Context>::type l_attr_type;

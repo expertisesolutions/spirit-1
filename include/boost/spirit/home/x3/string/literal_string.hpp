@@ -65,7 +65,7 @@ namespace boost { namespace spirit { namespace x3
             OutputIterator sink
           , Context const& context, unused_type, Attribute_ const& attr) const
         {
-            return detail::string_generate(str, sink, attr, get_case_compare<encoding>(context));
+            return detail::string_generate(str, sink, attr);
         }
         
         String str;
