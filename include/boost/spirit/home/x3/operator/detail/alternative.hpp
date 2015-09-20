@@ -261,9 +261,9 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
       , Context const& context, RContext& rcontext, Attribute& attr
                               , std::true_type)
     {
-      if (p.generate(sink, context, rcontext
-                     , boost::get<typename traits::attribute_of<Generator, Context>::type>(attr)))
-          return true;
+        auto const* a = boost::get<typename traits::attribute_of<Generator, Context>::type>(&attr);
+        if (a && p.generate(sink, context, rcontext, *a))
+            return true;
         return false;
     }
 

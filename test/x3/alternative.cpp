@@ -241,8 +241,9 @@ main()
         //BOOST_TEST(test("x", buffer[char_('x')] | char_('i')));
 
         boost::variant<int, char> v (10);
-        //BOOST_TEST(test_gen("10", char_ | int_, v));
-        // BOOST_TEST(test_gen("10", int_ | char_, v));
+        BOOST_TEST(test_gen("10", char_ | int_, v));
+        BOOST_TEST(test_gen("10", int_ | char_, v));
+        // FIXME:
         // BOOST_TEST(test_gen("a", lit('a') | char_ | int_, v));
         // BOOST_TEST(test_gen("a", char_ | lit('a') | int_, v));
         // BOOST_TEST(test_gen("10", int_ | lit('a') | char_, v));

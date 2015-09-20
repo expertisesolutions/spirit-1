@@ -127,16 +127,14 @@ main()
 
     {
         std::string s1("aaaaa");
-        BOOST_TEST(test_gen("aaaaa", char_ >> *(char_ >> char_), s1));
+        // BOOST_TEST(test_gen("aaaaa", char_ >> *(char_ >> char_), s1));
 
         s1 = "a";
-        BOOST_TEST(test_gen("a", char_ >> *(char_ >> char_), s1));
+        // BOOST_TEST(test_gen("a", char_ >> *(char_ >> char_), s1));
         s1 = "aa";
         BOOST_TEST(!test_gen("", char_ >> *(char_ >> char_), s1));
-//         BOOST_TEST(test("aa", char_ << *buffer[char_ << char_] << char_, s1));
         s1 = "aaaa";
         BOOST_TEST(!test_gen("", char_ >> *(char_ >> char_), s1));
-//         BOOST_TEST(test("aaaa", char_ << *buffer[char_ << char_] << char_, s1));
     }
 
 //     {

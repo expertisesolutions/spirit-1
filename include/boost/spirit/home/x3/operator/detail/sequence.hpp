@@ -609,7 +609,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
       , Context const& context, RContext& rcontext, Attribute& attr
       , traits::container_attribute)
     {
-        static_assert(false, "lacking generate_from_sequence");
+      //static_assert(std::is_same<void, Generator>::value, "lacking generate_from_sequence");
         // if (parse_into_container(parser.left, first, last, context, rcontext, attr)
         //     && parse_into_container(parser.right, first, last, context, rcontext, attr))
         //     return true;
